@@ -1,0 +1,26 @@
+{
+  "name": "d-track-mobile-api",
+  "version": "1.0.0",
+  "description": "Node.js Express Serverless API for mobile device user login logs with Supabase PostgreSQL on Vercel",
+  "main": "api/index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "express",
+    "postgresql",
+    "supabase",
+    "vercel",
+    "serverless",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}
