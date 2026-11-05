@@ -56,6 +56,7 @@ app.use((req, res, next) => {
 const handleRoot = (req, res) => {
   res.json({
     message: 'Welcome to D-Track Mobile App API (Vercel Serverless)',
+    version: '1.1.0',
     status: 'online',
     database: 'Supabase PostgreSQL',
     endpoints: {
@@ -63,6 +64,18 @@ const handleRoot = (req, res) => {
       getLogs: 'GET /api/logs or /api/user-login?emp_code=10245&limit=50',
       getLogsByEmpCode: 'GET /api/logs/:emp_code',
       health: 'GET /api/health or /health'
+    },
+    samplePayload: {
+      event: 'user_login',
+      emp_code: '10245',
+      device_name: 'Xiaomi Redmi 12 5G',
+      android_version: '14',
+      mediadrm_id: 'cd0f53b21cf95b58',
+      android_id: 'cd0f53b21cf95b58',
+      app_version: '2.12.52',
+      login_time: '2026-11-05 23:20:00',
+      latitude: '28.613929',
+      longitude: '77.209021'
     }
   });
 };
