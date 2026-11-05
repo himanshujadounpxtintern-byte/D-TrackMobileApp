@@ -5,6 +5,19 @@ const db = require('../db');
 
 const app = express();
 
+app.set('trust proxy', true);
+
+// Fix Vercel Serverless Function rewrites: restore the true path if rewritten to index.js
+app.use((req, res, next) => {
+  const original = req.originalUrl || req.headers['x-matched-path'] || req.headers['x-forwarded-path'] || req.headers['x-forwarded-uri'];
+  if (original && (req.url.startsWith('/api/index.js') || req.url.startsWith('/api/index'))) {
+    if (!original.includes('/api/index')) {
+      req.url = original;
+    }
+  }
+  next();
+});
+
 // CORS Configuration - Allow everyone
 const corsOptions = {
   origin: '*',
@@ -156,11 +169,14 @@ const handlePostLog = async (req, res) => {
   }
 };
 
-// POST routes (support both /api/logs and /logs)
+// POST routes (support both /api/logs, /logs, /api/user-login, and /user-login)
 app.post('/api/logs', handlePostLog);
 app.post('/logs', handlePostLog);
 app.post('/api/user-login', handlePostLog);
 app.post('/user-login', handlePostLog);
+app.post('/api/index.js', handlePostLog);
+app.post('/api/index', handlePostLog);
+app.post('/api', handlePostLog);
 
 /**
  * GET Logs Handler
@@ -225,6 +241,8 @@ app.get('/api/logs', handleGetLogs);
 app.get('/logs', handleGetLogs);
 app.get('/api/user-login', handleGetLogs);
 app.get('/user-login', handleGetLogs);
+app.get('/api/index.js', handleGetLogs);
+app.get('/api/index', handleGetLogs);
 
 // GET logs for a specific employee code
 const handleGetLogsByEmpCode = async (req, res) => {
