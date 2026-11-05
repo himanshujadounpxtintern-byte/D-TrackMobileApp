@@ -7,12 +7,16 @@ const app = express();
 
 app.set('trust proxy', true);
 
-// Fix Vercel Serverless Function rewrites: restore the true path if rewritten to /api or /api/index
+// Fix Vercel Serverless Function rewrites: restore the true path via query param or headers
 app.use((req, res, next) => {
-  const original = req.originalUrl || req.headers['x-matched-path'] || req.headers['x-forwarded-path'] || req.headers['x-forwarded-uri'];
-  if (original && (req.url === '/api' || req.url.startsWith('/api/index'))) {
-    if (original !== '/api' && !original.includes('/api/index')) {
-      req.url = original;
+  if (req.query && req.query.__path) {
+    req.url = '/' + req.query.__path.replace(/^\/+/, '');
+  } else {
+    const original = req.originalUrl || req.headers['x-matched-path'] || req.headers['x-forwarded-path'] || req.headers['x-forwarded-uri'];
+    if (original && (req.url === '/api' || req.url.startsWith('/api/index'))) {
+      if (original !== '/api' && !original.includes('/api/index')) {
+        req.url = original;
+      }
     }
   }
   next();
