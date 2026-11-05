@@ -11,8 +11,15 @@ CREATE TABLE IF NOT EXISTS login_logs (
   android_id VARCHAR(255),
   app_version VARCHAR(50),
   login_time TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION
 );
+
+-- For existing tables that need to add latitude and longitude columns:
+ALTER TABLE login_logs 
+  ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION,
+  ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION;
 
 -- Indexes for fast query performance
 CREATE INDEX IF NOT EXISTS idx_login_logs_emp_code ON login_logs (emp_code);

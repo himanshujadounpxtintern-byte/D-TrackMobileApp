@@ -117,7 +117,9 @@ const handlePostLog = async (req, res) => {
       mediadrm_id,
       android_id,
       app_version,
-      login_time
+      login_time,
+      latitude,
+      longitude
     } = req.body || {};
 
     // Basic Validation
@@ -131,6 +133,12 @@ const handlePostLog = async (req, res) => {
     const eventName = event || 'user_login';
     const parsedLoginTime = login_time ? new Date(login_time) : new Date();
 
+    // Parse coordinates safely (supports string, number, or null/undefined)
+    const rawLat = latitude !== undefined && latitude !== null && latitude !== '' ? parseFloat(latitude) : null;
+    const rawLng = longitude !== undefined && longitude !== null && longitude !== '' ? parseFloat(longitude) : null;
+    const finalLat = rawLat !== null && !isNaN(rawLat) ? rawLat : null;
+    const finalLng = rawLng !== null && !isNaN(rawLng) ? rawLng : null;
+
     const insertQuery = `
       INSERT INTO login_logs (
         event,
@@ -140,8 +148,10 @@ const handlePostLog = async (req, res) => {
         mediadrm_id,
         android_id,
         app_version,
-        login_time
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        login_time,
+        latitude,
+        longitude
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING *;
     `;
 
@@ -153,7 +163,9 @@ const handlePostLog = async (req, res) => {
       mediadrm_id || null,
       android_id || null,
       app_version || null,
-      isNaN(parsedLoginTime.getTime()) ? new Date() : parsedLoginTime
+      isNaN(parsedLoginTime.getTime()) ? new Date() : parsedLoginTime,
+      finalLat,
+      finalLng
     ];
 
     const result = await db.query(insertQuery, values);
